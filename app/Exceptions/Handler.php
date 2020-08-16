@@ -63,23 +63,27 @@ class Handler extends ExceptionHandler
     {
         $this->registerErrorViewPaths();
 
-        $view = $this->getHttpExceptionView($e);
+        $views = [$this->getCustomHttpExceptionView($e), 'errors.error', $this->getHttpExceptionView($e)];
 
-        if (!view()->exists($view)) {
-            $view = 'errors.error';
+        foreach ($views as $view) {
+            if (view()->exists($view)) {
+                return response()->view($view, [
+                    'errors' => new ViewErrorBag(),
+                    'status' => $e->getStatusCode(),
+                    'message' => Response::$statusTexts[$e->getStatusCode()],
+                ], $e->getStatusCode(), $e->getHeaders());
+            }
         }
 
-        return response()->view($view, [
-            'errors' => new ViewErrorBag(),
-            'status' => $e->getStatusCode(),
-            'message' => Response::$statusTexts[$e->getStatusCode()],
-        ], $e->getStatusCode(), $e->getHeaders());
+        return $this->convertExceptionToResponse($e);
     }
 
     /**
-     * @inheritDoc
+     * @param \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $e
+     *
+     * @return string
      */
-    protected function getHttpExceptionView(HttpExceptionInterface $e)
+    protected function getCustomHttpExceptionView(HttpExceptionInterface $e)
     {
         return 'errors.' . $e->getStatusCode();
     }
