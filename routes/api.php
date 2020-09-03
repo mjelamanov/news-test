@@ -19,5 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
+    Route::get('news/{news}/comments', 'CommentController@index');
+    Route::post('news/{news}/comments', 'CommentController@store');
     Route::resource('news', 'NewsController')->only(['index', 'show']);
 });
