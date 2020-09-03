@@ -28,4 +28,5 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'auth
     Route::resource('settings', 'SettingsController');
     Route::get('generator', ['uses' => '\Appzcoder\LaravelControllers\ProcessController@getGenerator']);
     Route::post('generator', ['uses' => '\Appzcoder\LaravelControllers\ProcessController@postGenerator']);
+    Route::resource('news', 'NewsController');
 });
